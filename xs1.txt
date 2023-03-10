@@ -1,0 +1,47 @@
+(SELECT
+    exam_question_rel.exam_id AS exam_id,
+    exam_question_rel.question_id AS question_id,
+    join_question.option_id AS option_id,
+    join_question.question_details AS question_details,
+    join_question.question_is_description AS question_is_description,
+    join_question.correct_answer_key AS correct_answer_key,
+    join_question.options_opt_nm AS options_opt_nm,
+    join_question.options_details AS options_details,
+    join_question.options_is_description AS options_is_description,
+    join_question.question_explanation AS question_explanation,
+    join_question.explain_is_description AS explain_is_description,
+ 	join_exam.exam_duration AS exam_duration
+FROM
+    exam_question_rel
+LEFT JOIN(
+    SELECT
+        question_id,
+        option_id,
+        join1.details AS question_details,
+        join1.is_description AS question_is_description,
+        join1.correct_answer_key AS correct_answer_key,
+        join1.explanation AS question_explanation,
+    	join1.explain_is_description AS explain_is_description,
+    	join2.opt_nm AS options_opt_nm,
+        join2.details AS options_details,
+        join2.is_description AS options_is_description
+    
+    FROM
+        question_option_rel
+    LEFT JOIN question AS join1 ON 1
+    LEFT JOIN OPTIONS AS join2 ON 1
+    WHERE
+        join1.id = question_option_rel.question_id AND join2.id = question_option_rel.option_id
+) AS join_question ON 1
+LEFT JOIN 
+(SELECT join_time.duration AS exam_duration FROM exam 
+LEFT JOIN time AS join_time ON 1
+WHERE exam.time_id = join_time.id AND exam.id = 200059) AS join_exam ON 1
+WHERE
+    exam_question_rel.question_id = join_question.question_id AND exam_question_rel.exam_id = 200059)
+
+
+
+SELECT join_time.duration AS exam_duration FROM exam 
+LEFT JOIN time AS join_time ON 1
+WHERE exam.time_id = join_time.id AND exam.id = 200059
